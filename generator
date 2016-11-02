@@ -1,0 +1,73 @@
+#!/usr/bin/python
+import json
+import sys
+import os
+
+
+def write_bulk(documents, header, filepath):
+    write_file = open(filepath, 'w')
+    try:
+        for document in documents:
+            write_file.write(header + '\n')
+            write_file.write(json.dumps(document) + '\n')
+    except:
+        print("Something went wrong during document parsing.")
+        write_file.close()
+        exit - 3
+    finally:
+        write_file.close()
+
+
+def assert_file_exists(file_path):
+    if not os.path.exists(file_path):
+        print("The file {} does not exit.".format(file_path))
+        exit - 2
+
+
+if len(sys.argv) < 2:
+    print(
+        "Elastic Search Bulk API data formatter.\nUsage:\ngenerator source [destination] [index] [type]\n\nThe source should contain JSON objects in an array.\nCheckout http://www.json-generator.com/ to quickly generate data.\nIt only supports insert action."
+    )
+    exit(0)
+
+try:
+    outputPath = sys.argv[2]
+except IndexError:
+    outputPath = None
+
+try:
+    indexName = sys.argv[3]
+except IndexError:
+    indexName = None
+
+try:
+    typeName = sys.argv[4]
+except IndexError:
+    typeName = None
+
+path = sys.argv[1]
+if not os.path.exists(path):
+    print("The file {} does not exit.".format(path))
+    exit - 2
+
+header = {"index": {}}
+if indexName:
+    header['index']['_index'] = indexName
+if typeName:
+    header['index']['_type'] = typeName
+
+operationHeaderJson = json.dumps(header)
+
+loadFile = open(path)
+data = json.load(loadFile)
+loadFile.close()
+
+if outputPath is not None:
+    assert_file_exists(outputPath)
+    write_bulk(data, operationHeaderJson, outputPath)
+    exit(1)
+else:
+    name = os.path.basename(path)
+    fileName = './{filename}.bulk'.format(filename=name)
+    write_bulk(data, operationHeaderJson, fileName)
+    exit(0)
