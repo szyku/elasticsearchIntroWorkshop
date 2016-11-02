@@ -1,0 +1,15 @@
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "and":[
+            "term": { "title": "woody"}
+
+        ],
+        "or":[
+            "term": { "body": "saw"}
+        ]
+      }
+    }
+  }
+}

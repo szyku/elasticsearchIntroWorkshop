@@ -1,0 +1,21 @@
+version: '2'
+services:
+  elasticsearch:
+      image: elasticsearch:1.7.5
+      volumes:
+          - ./elasticsearch/logs:/var/log/elasticsearch
+          - ./elasticsearch/data:/usr/share/elasticsearch/data
+          - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+          - ./elasticsearch/config/scripts:/usr/share/elasticsearch/config/scripts
+      ports:
+          - "9200:9200"
+          - "9300:9300"
+      command: /bin/bash -c 'usermod -u 1000 elasticsearch; gosu elasticsearch elasticsearch'
+
+
+  kibana:
+      image: kibana:4.0.3
+      ports:
+          - 5601:5601
+      links:
+          - elasticsearch
