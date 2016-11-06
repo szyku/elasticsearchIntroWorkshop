@@ -5,7 +5,7 @@ import os
 
 
 def write_bulk(documents, header, filepath):
-    write_file = open(filepath, 'w')
+    write_file = open(filepath, 'w+')
     try:
         for document in documents:
             write_file.write(header + '\n')
@@ -46,9 +46,7 @@ except IndexError:
     typeName = None
 
 path = sys.argv[1]
-if not os.path.exists(path):
-    print("The file {} does not exit.".format(path))
-    exit - 2
+assert_file_exists(path)
 
 header = {"index": {}}
 if indexName:
@@ -63,7 +61,6 @@ data = json.load(loadFile)
 loadFile.close()
 
 if outputPath is not None:
-    assert_file_exists(outputPath)
     write_bulk(data, operationHeaderJson, outputPath)
     exit(1)
 else:
